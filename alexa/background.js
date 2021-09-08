@@ -1,9 +1,9 @@
 'use strict'
-const infourl ='https://www.alexa.com/minisiteinfo/'
+const infourl = 'https://www.alexa.com/minisiteinfo/'
 const parser = new DOMParser();
 
 let rankTable = {};
-let countryTable={};
+let countryTable = {};
 
 
 const shortTextForNumber = (number) => {
@@ -13,7 +13,7 @@ const shortTextForNumber = (number) => {
 		return Math.floor(number / 1000)
 			.toString() + "k"
 	} else {
-		return Math.floor(number / 1000/1000)
+		return Math.floor(number / 1000 / 1000)
 			.toString() + "m"
 	}
 }
@@ -35,26 +35,66 @@ chrome.browserAction.onClicked.addListener(onClicked);
 
 async function committed(details) {
 	if (details.frameId !== 0) { return; }
-	const hostname=new URL(details.url).hostname;
+	const hostname = new URL(details.url).hostname;
 	try {
 		if (typeof rankTable[hostname] === 'undefined') {
+
+
+
 			const res = await fetch(infourl + hostname);
-			if(!res.ok){
+			/*if (res.status !== 200) {
+				rankTable[hostname] = 'E' + res.status;
+				console.log(rankTable[hostname]);
+				return;
+			}*/
+			if (res.status!==200) {
 				chrome.browserAction.setBadgeText({
 					tabId: details.tabId,
-					text: 'E'+res.status
+					text: 'E' + res.status
 				});
 				return;
 			}
-			rankTable[hostname]="NA";
+			//rankTable[hostname] = "0";
+
 			const res_text = await res.text();
 			const doc = parser.parseFromString(res_text, 'text/html');
-			countryTable[hostname]=doc.querySelector('.white.nounderline.truncation').textContent+'\n';
+
+			try {
+				countryTable[hostname] = doc.querySelector('.white.nounderline.truncation').textContent + '\n'; //host
+			} catch (e) {
+				console.log(e);
+				rankTable[hostname] = 'ban?';
+				return;
+			}
+
+			try {
+				const rank = doc.querySelector('span.hash').nextSibling.textContent.trim(); //rank
+				countryTable[hostname] += rank + '\n';
+				rankTable[hostname] = shortTextForNumber(strToInt(rank));
+			} catch (e) { rankTable[hostname] = '0' }
+
+			try {
+				countryTable[hostname] += doc.querySelector('.textsmall.nomarginbottom.margintop10').textContent + '\n'; //country
+			} catch (e) { }
+
+			try {
+				const list = doc.querySelectorAll('.Block.truncation.Link'); //related websites
+				for (let x of list) countryTable[hostname] += x.innerText + '\n';
+			} catch (e) { }
+
+
+
+			/*const res = await fetch(infourl + hostname);
+			
+			const res_text = await res.text();
+			const doc = parser.parseFromString(res_text, 'text/html');*/
+
+			/*countryTable[hostname] = doc.querySelector('.white.nounderline.truncation').textContent + '\n';
 			const rank = doc.querySelector('span.hash').nextSibling.textContent.trim();
-			rankTable[hostname] = shortTextForNumber(strToInt(rank));			
-			countryTable[hostname]+=doc.querySelector('.textsmall.nomarginbottom.margintop10').textContent+'\n';
-			const list=doc.querySelectorAll('.Block.truncation.Link');
-			for(let x of list)countryTable[hostname]+=x.innerText+'\n';
+			rankTable[hostname] = shortTextForNumber(strToInt(rank));
+			countryTable[hostname] += doc.querySelector('.textsmall.nomarginbottom.margintop10').textContent + '\n';
+			const list = doc.querySelectorAll('.Block.truncation.Link');
+			for (let x of list) countryTable[hostname] += x.innerText + '\n';*/
 		}
 
 	} catch (e) {
@@ -70,4 +110,4 @@ async function committed(details) {
 	});
 
 }
-chrome.webNavigation.onCommitted.addListener(committed,{url:[{schemes:["https","http"]}]});
+chrome.webNavigation.onCommitted.addListener(committed, { url: [{ schemes: ["https", "http"] }] });
