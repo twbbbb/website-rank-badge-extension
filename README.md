@@ -1,1 +1,0 @@
-# alexa-similarWeb-semRush-website-rank-number-badge-chrome-firefox-extension
