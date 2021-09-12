@@ -36,70 +36,66 @@ chrome.browserAction.onClicked.addListener(onClicked);
 async function committed(details) {
 	if (details.frameId !== 0) { return; }
 	const hostname = new URL(details.url).hostname;
-	try {
-		if (typeof rankTable[hostname] === 'undefined') {
+	if (typeof rankTable[hostname] === 'undefined' || rankTable[hostname] === 'ban?') {
 
 
 
-			const res = await fetch(infourl + hostname);
-			/*if (res.status !== 200) {
-				rankTable[hostname] = 'E' + res.status;
-				console.log(rankTable[hostname]);
-				return;
-			}*/
-			if (res.status!==200) {
-				chrome.browserAction.setBadgeText({
-					tabId: details.tabId,
-					text: 'E' + res.status
-				});
-				return;
-			}
-			//rankTable[hostname] = "0";
+		const res = await fetch(infourl + hostname);
+		/*if (res.status !== 200) {
+			rankTable[hostname] = 'E' + res.status;
+			console.log(rankTable[hostname]);
+			return;
+		}*/
+		if (res.status !== 200) {
+			chrome.browserAction.setBadgeText({
+				tabId: details.tabId,
+				text: 'E' + res.status
+			});
+			return;
+		}
+		//rankTable[hostname] = "0";
 
-			const res_text = await res.text();
-			const doc = parser.parseFromString(res_text, 'text/html');
+		const res_text = await res.text();
+		const doc = parser.parseFromString(res_text, 'text/html');
 
-			try {
-				countryTable[hostname] = doc.querySelector('.white.nounderline.truncation').textContent + '\n'; //host
-			} catch (e) {
-				console.log(e);
-				rankTable[hostname] = 'ban?';
-				return;
-			}
-
-			try {
-				const rank = doc.querySelector('span.hash').nextSibling.textContent.trim(); //rank
-				countryTable[hostname] += rank + '\n';
-				rankTable[hostname] = shortTextForNumber(strToInt(rank));
-			} catch (e) { rankTable[hostname] = '0' }
-
-			try {
-				countryTable[hostname] += doc.querySelector('.textsmall.nomarginbottom.margintop10').textContent + '\n'; //country
-			} catch (e) { }
-
-			try {
-				const list = doc.querySelectorAll('.Block.truncation.Link'); //related websites
-				for (let x of list) countryTable[hostname] += x.innerText + '\n';
-			} catch (e) { }
-
-
-
-			/*const res = await fetch(infourl + hostname);
-			
-			const res_text = await res.text();
-			const doc = parser.parseFromString(res_text, 'text/html');*/
-
-			/*countryTable[hostname] = doc.querySelector('.white.nounderline.truncation').textContent + '\n';
-			const rank = doc.querySelector('span.hash').nextSibling.textContent.trim();
-			rankTable[hostname] = shortTextForNumber(strToInt(rank));
-			countryTable[hostname] += doc.querySelector('.textsmall.nomarginbottom.margintop10').textContent + '\n';
-			const list = doc.querySelectorAll('.Block.truncation.Link');
-			for (let x of list) countryTable[hostname] += x.innerText + '\n';*/
+		try {
+			countryTable[hostname] = doc.querySelector('.white.nounderline.truncation').textContent + '\n'; //host
+		} catch (e) {
+			console.log(e);
+			rankTable[hostname] = 'ban?';
+			return;
 		}
 
-	} catch (e) {
-		console.log(e);
+		try {
+			const rank = doc.querySelector('span.hash').nextSibling.textContent.trim(); //rank
+			countryTable[hostname] += rank + '\n';
+			rankTable[hostname] = shortTextForNumber(strToInt(rank));
+		} catch (e) { rankTable[hostname] = '0' }
+
+		try {
+			countryTable[hostname] += doc.querySelector('.textsmall.nomarginbottom.margintop10').textContent + '\n'; //country
+		} catch (e) { }
+
+		try {
+			const list = doc.querySelectorAll('.Block.truncation.Link'); //related websites
+			for (let x of list) countryTable[hostname] += x.innerText + '\n';
+		} catch (e) { }
+
+
+
+		/*const res = await fetch(infourl + hostname);
+		
+		const res_text = await res.text();
+		const doc = parser.parseFromString(res_text, 'text/html');*/
+
+		/*countryTable[hostname] = doc.querySelector('.white.nounderline.truncation').textContent + '\n';
+		const rank = doc.querySelector('span.hash').nextSibling.textContent.trim();
+		rankTable[hostname] = shortTextForNumber(strToInt(rank));
+		countryTable[hostname] += doc.querySelector('.textsmall.nomarginbottom.margintop10').textContent + '\n';
+		const list = doc.querySelectorAll('.Block.truncation.Link');
+		for (let x of list) countryTable[hostname] += x.innerText + '\n';*/
 	}
+
 	chrome.browserAction.setBadgeText({
 		tabId: details.tabId,
 		text: rankTable[hostname]
