@@ -1,0 +1,21 @@
+{
+  "background": {
+    "scripts": [
+      "background.js"
+    ]
+  },
+  "browser_action": {
+  },
+  "manifest_version": 2,
+  "icons":{
+    "128":"128x128.png"
+  },
+  "name": "semRush website rank badge",
+  "description":"showing the current webpage's website rank on the extension icon",
+  "permissions": [
+    "activeTab",
+    "webNavigation",
+    "https://seoquake.publicapi.semrush.com/*"
+  ],
+  "version": "1.0.1"
+}
