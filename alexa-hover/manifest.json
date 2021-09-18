@@ -17,7 +17,7 @@
     "https://www.alexa.com/minisiteinfo/*"
     
   ],
-  "version": "1.0.1",
+  "version": "1.0.2",
   "content_scripts": [
     {
       "matches": ["*://*/*"],

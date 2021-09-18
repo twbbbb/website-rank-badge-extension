@@ -5,8 +5,24 @@ const infourl = 'https://data.similarweb.com/api/v1/data?domain='
 let rankTable = {};
 let countryTable = {};
 
-
-const shortTextForNumber = (number) => {
+function shortTextForNumber (number) {
+	if (number < 1000) {
+		return number.toString()
+	} else if (number < 10**5) {
+		return Math.floor(number / 1000)
+			.toString() + "k"
+	} else if (number < 10**6) { 
+		return Math.floor(number / 10**5) 
+			.toString() + "hk"
+	} else if(number<10**8){
+		return Math.floor(number / 10**6) 
+			.toString() + "m"
+	} else{
+		return Math.floor(number / 10**8)
+			.toString() + "hm"
+	}
+}
+/*const shortTextForNumber = (number) => {
 	if (number < 10000) {
 		return number.toString()
 	} else if (number < 1000000) {
@@ -16,7 +32,7 @@ const shortTextForNumber = (number) => {
 		return Math.floor(number / 1000 / 1000)
 			.toString() + "m"
 	}
-}
+}*/
 
 
 function onClicked(tab) {
@@ -25,11 +41,12 @@ function onClicked(tab) {
 }
 
 chrome.browserAction.onClicked.addListener(onClicked);
-
+let fetchCount=0;
 async function committed(details) {
 	if (details.frameId !== 0) { return; }
 	const hostname = new URL(details.url).hostname;
 	if (typeof rankTable[hostname] === 'undefined') {
+		console.log(`${fetchCount++} fetch ${hostname}`);
 		const res = await fetch(infourl + hostname);
 		if (res.status === 404) {
 			rankTable[hostname] = '0';
