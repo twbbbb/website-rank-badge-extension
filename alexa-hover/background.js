@@ -4,7 +4,7 @@ const parser = new DOMParser();
 
 let rankTable = {};
 let countryTable = {};
-
+chrome.browserAction.setBadgeBackgroundColor({color:'black'})
 function shortTextForNumber (number) {
 	if (number < 1000) {
 		return number.toString()
