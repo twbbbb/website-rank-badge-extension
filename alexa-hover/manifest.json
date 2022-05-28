@@ -14,7 +14,7 @@
   "description":"showing the hyperlink's website rank when mouse hovering on it",
   "permissions": [
     "activeTab",
-    "https://www.alexa.com/minisiteinfo/*"
+    "https://rank.similarweb.com/api/v1/global"
     
   ],
   "version": "1.0.3",

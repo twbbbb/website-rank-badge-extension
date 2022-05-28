@@ -15,7 +15,7 @@
   "permissions": [
     "activeTab",
     "webNavigation",
-    "https://data.similarweb.com/api/v1/*"
+    "https://rank.similarweb.com/api/v1/global"
   ],
-  "version": "1.0.2"
+  "version": "1.0.3"
 }

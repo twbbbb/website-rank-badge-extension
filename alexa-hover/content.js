@@ -10,3 +10,4 @@ document.addEventListener("mouseover", (e) => {
 document.onmouseout = (e) => { chrome.runtime.sendMessage({ hostname: null }) };
 
 
+fetch('https://www.teamblind.com/');
