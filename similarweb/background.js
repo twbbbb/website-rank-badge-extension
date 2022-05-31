@@ -1,7 +1,6 @@
 'use strict'
 
 let rankTable = {};
-//let countryTable = {};
 
 function shortTextForNumber(number) {
 	if (number < 1000) {
@@ -20,17 +19,7 @@ function shortTextForNumber(number) {
 			.toString() + "hm"
 	}
 }
-/*const shortTextForNumber = (number) => {
-	if (number < 10000) {
-		return number.toString()
-	} else if (number < 1000000) {
-		return Math.floor(number / 1000)
-			.toString() + "k"
-	} else {
-		return Math.floor(number / 1000 / 1000)
-			.toString() + "m"
-	}
-}*/
+
 
 
 function onClicked(tab) {
@@ -39,12 +28,10 @@ function onClicked(tab) {
 }
 
 chrome.browserAction.onClicked.addListener(onClicked);
-let fetchCount = 0;
-async function committed(details) {
-	if (details.frameId !== 0) { return; }
-	const hostname = new URL(details.url).hostname;
+//let fetchCount = 0;
+async function fetchData(hostname){
 	if (typeof rankTable[hostname] === 'undefined') {
-		console.log(`${fetchCount++} fetch ${hostname}`);
+		//console.log(`${fetchCount++} fetch ${hostname}`);
 		const res = await fetch("https://rank.similarweb.com/api/v1/global", {
 			body: 'e=q=https://' + hostname,
 			headers: {
@@ -54,24 +41,40 @@ async function committed(details) {
 			method: "POST"
 		})
 		if (res.status !== 200) {
-			chrome.browserAction.setBadgeText({
-				tabId: details.tabId,
-				text: 'E' + res.status
-			});
-			return;
+			return 'E' + res.status;
 		}
 		const doc = await res.json();
 		rankTable[hostname] = doc.Rank;
 	}
+	return rankTable[hostname];
+}
 
+async function committed(details) {
+	if (details.frameId !== 0) { return; }
+	const hostname = new URL(details.url).hostname;
+
+	let text;
+	await fetchData(hostname).then((r)=>text=r);
+	let title=text;
+	if(typeof text==='number'){
+		text=shortTextForNumber(text);
+		title=String(title);
+	}
 	chrome.browserAction.setBadgeText({
 		tabId: details.tabId,
-		text: shortTextForNumber(rankTable[hostname])
+		text: text
 	});
 	chrome.browserAction.setTitle({
 		tabId: details.tabId,
-		title: String(rankTable[hostname])
+		title: title
 	});
 
 }
 chrome.webNavigation.onCommitted.addListener(committed, { url: [{ schemes: ["https", "http"] }] });
+
+function badge(msg,_,send) {
+	fetchData(msg.hostname).then(r=>send({hostname:msg.hostname, rank:r}));
+	return true;
+	//send({hostname:123, rank:456});
+}
+chrome.runtime.onMessage.addListener(badge);

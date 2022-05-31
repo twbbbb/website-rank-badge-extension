@@ -17,5 +17,12 @@
     "webNavigation",
     "https://rank.similarweb.com/api/v1/global"
   ],
-  "version": "1.0.3"
+  "version": "1.0.3",
+  "content_scripts": [
+    {
+      "matches": ["*://*/*"],
+      "js": ["content.js"],
+      "css":["style.css"]
+    }
+  ]
 }
