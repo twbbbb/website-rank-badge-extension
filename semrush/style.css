@@ -1,0 +1,8 @@
+.rankrank1 {
+    position: fixed;
+    bottom: 60px;
+    left: 5px;
+    z-index: 2147483647;
+    color: white;
+    background-color: black;
+}
