@@ -15,7 +15,14 @@
   "permissions": [
     "activeTab",
     "webNavigation",
-    "https://www.alexa.com/minisiteinfo/*"
+    "https://xml.alexa.com/*"
   ],
-  "version": "1.0.2"
+  "version": "1.1.0",
+  "content_scripts": [
+    {
+      "matches": ["*://*/*"],
+      "js": ["content.js"],
+      "css":["style.css"]
+    }
+  ]
 }

@@ -11,7 +11,7 @@ const shortTextForNumber = (number) => {
 }
 
 let div = document.createElement('div');
-div.className = "rankrank0";
+div.className = "rankrank2";
 document.body.append(div);
 let myhostname = null;
 document.addEventListener("mouseover", (e) => {
@@ -28,7 +28,7 @@ document.addEventListener("mouseover", (e) => {
             if (msg.hostname !== myhostname) return;
             let rank=msg.rank;
             if(typeof rank==='number') rank=shortTextForNumber(rank);
-            div.innerHTML = 'S '+rank;
+            div.innerHTML = 'A '+rank;
         }
     )
 });
