@@ -1,13 +1,13 @@
 const shortTextForNumber = (number) => {
-	if (number < 10000) {
-		return number.toString()
-	} else if (number < 1000000) {
-		return Math.floor(number / 1000)
-			.toString() + "k"
-	} else {
-		return Math.floor(number / 1000 / 1000)
-			.toString() + "m"
-	}
+    if (number < 10000) {
+        return number.toString()
+    } else if (number < 1000000) {
+        return Math.floor(number / 1000)
+            .toString() + "k"
+    } else {
+        return Math.floor(number / 1000 / 1000)
+            .toString() + "m"
+    }
 }
 
 let div = document.createElement('div');
@@ -26,13 +26,13 @@ document.addEventListener("mouseover", (e) => {
     },
         (msg) => {
             if (msg.hostname !== myhostname) return;
-            let rank=msg.rank;
-            if(typeof rank==='number') rank=shortTextForNumber(rank);
-            div.innerHTML = 'S '+rank;
+            let rank = msg.rank;
+            if (typeof rank === 'number') rank = shortTextForNumber(rank);
+            div.innerHTML = 'S ' + rank;
         }
     )
 });
-document.onmouseout = () => {
-    div.innerHTML="";
-    myhostname=null;
-};
+document.addEventListener("mouseout", () => {
+    div.innerHTML = "";
+    myhostname = null;
+});

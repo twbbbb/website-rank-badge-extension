@@ -32,7 +32,7 @@ document.addEventListener("mouseover", (e) => {
         }
     )
 });
-document.onmouseout = () => {
-    div.innerHTML="";
-    myhostname=null;
-};
+document.addEventListener("mouseout", () => {
+    div.innerHTML = "";
+    myhostname = null;
+});
