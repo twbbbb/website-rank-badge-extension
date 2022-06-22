@@ -1,3 +1,6 @@
 similarWeb-semRush-website-rank-number-badge-chrome-firefox-extension
 https://chrome.google.com/webstore/detail/semrush-website-rank-badg/hmjkeajnlfhbjabboakcgimcnejnnbjj
 https://addons.mozilla.org/en-US/firefox/user/14060045/
+
+https://rank.similarweb.com/api/v1/global
+This API only shows maybe about top 30k rank, and some strange error 403 for some websites, Linkedin.com, for example.
